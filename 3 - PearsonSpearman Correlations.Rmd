@@ -1,0 +1,102 @@
+---
+title: "Bits of Code"
+author: "Amir Nakar"
+date: "10/1/2020"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include=FALSE}
+load(file = "F:/MorK/R/R-environment.RData")
+#### Load the data ####
+library(openxlsx)
+library(reshape2)
+library(ggplot2)
+library(Hmisc) 
+library(dplyr)
+library(car)
+library(caret)
+library(readxl)
+library(ggsignif)
+library(tidyr)
+library(vegan)
+library(purrr)
+```
+ 
+
+```{r message=FALSE, warning=FALSE}
+#### Correlations ####
+
+# This we must break down into 3 "categories":
+# 1. Correlation between numericals 
+# 2. Correlation between a binary category (like gender) and a numerical
+# 3. Correlation between a categorical and a numerical
+
+####1. Correlation between numericals ####
+
+#### Function explained ####
+# This function will work as follows: 
+# Input: two variable names from your data set
+# Output: scatterplot with correlation coefficents and statistic printed on it
+#
+# This will calculate the correlation between two chosen variables and plot it
+
+
+correlation.with.plot = function(var1, var2, cor.met){  # Defines the function requiring two parameters. cor.met needs to be either "pearson" or "spearman"
+  data.for.function = data[,c(var1,var2)]      # creates a dataframe from your data which is only the two parameters you chose
+  colnames(data.for.function) = c(var1,var2)   # Gives the relevant columns names (for later)
+
+  
+cor = cor.test(data[,var1], data[,var2], method = cor.met)       # tests the correlation between the two variables
+                                               # This calculates all the values we need: r and p-val
+
+plot = ggplot(                               # This is a very long function to create the plot
+  data.for.function, aes(x=data.for.function[,1],y=data.for.function[,2])) +                # Defines the relevant data
+  geom_point()  +                            # Defines that we will create a scatter plot
+  theme(panel.background = element_rect(fill="white")) +    # Makes it visually clean
+  labs(x = var1,y=var2) +                                   # Adds X, Y axis labels
+  theme(panel.grid.major = element_line(colour = "gray")) + # adds gray lines on the Y axis
+  theme(panel.grid.minor = element_line(colour = "gray")) + # does the same
+  guides(fill=FALSE) +                                      # Removes the legend (not needed for this)
+  labs(                                                     # Starts to create the complicated titles
+    title = paste("Comparison between",var1, "&", var2, sep = " "), # Main title: Comparison between the two variables
+    subtitle = paste(                                       # Subtitle: gives the different statistics pasted together
+      "Correlation statistics using", cor.met, "method:
+      correlation coefficent (r) = ",   round(cor$estimate, digits = 2), 
+      "\n R^2 = ", round(cor$estimate^2, digits = 2), 
+      "\n p-value = ", 
+      formatC(cor$p.value, format = "g", digits = 2))) +
+  geom_smooth(method="lm", se = F)                             # Adds a linear correlation line to the figure
+  
+}
+
+# Now we can ask the questions
+names # This is again just for my reference
+
+
+Q10 = correlation.with.plot(names[6], names[32], cor.met = "pearson")  # hours of use VS. SUM.OLD
+Q11 = correlation.with.plot(names[6], names[33], cor.met = "pearson")  # hours of use VS. SUM.NEW
+Q12 = correlation.with.plot(names[9], names[32], cor.met = "spearman")  # easy VS. SUM.OLD
+Q13 = correlation.with.plot(names[9], names[33], cor.met = "spearman")  # easy VS. SUM.NEW
+Q14 = correlation.with.plot(names[15], names[32], cor.met = "spearman") # n.menu2 VS. SUM.OLD
+Q15 = correlation.with.plot(names[14], names[33], cor.met = "spearman") # n.menu1 VS. SUM.NEW
+Q16 = correlation.with.plot(names[3], names[11], cor.met = "spearman")  # age VS. minutes
+
+```
+
+Output:
+```{r message=FALSE, warning=FALSE, echo=FALSE}
+Q10
+Q11
+Q12
+Q13
+Q14
+Q15
+Q16
+
+
+
+```

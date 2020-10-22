@@ -1,0 +1,87 @@
+---
+title: "Bits of Code"
+author: "Amir Nakar"
+date: "10/1/2020"
+output: word_document
+fontsize: 6pt
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include=FALSE}
+load(file = "F:/MorK/R/R-environment.RData")
+#### Load the data ####
+library(openxlsx)
+library(reshape2)
+library(ggplot2)
+library(Hmisc) 
+library(dplyr)
+library(car)
+library(caret)
+library(readxl)
+library(ggsignif)
+library(tidyr)
+library(vegan)
+library(purrr)
+```
+ 
+
+```{r message=FALSE, warning=FALSE}
+# 2. Correlation between a binary category (like gender) and a numerical
+# For questions with regards to 2 categories, like gender, it makes no sense to calculate a 
+# CORRELATION (as there is no 1.3 male)
+# Therefor we need to test whether there is a difference in averages like we did earlier
+
+# As we already showed no variable behaves "noramlly", we must still use the non-parametric test: Wilcoxon Ranked Sum Test
+# This function is a variation of the earlier 2 functions for this purpose.
+# Input: Two variables, the first one is BINARY and the second NUMERICAL.
+# Output: a boxplot with test statistics printed on it
+
+wilcox.categorical.data <- function(var1, var2) {          # Defines the function requiring two parameters
+  data.for.function = data[,c(var1,var2)]                  # creates a dataframe from your data which is only the two parameters you chose
+  data.for.function[,1] = as.factor(data.for.function[,1]) # Defines the BINARY column as CATEGORICAL
+  colnames(data.for.function) = c(var1,var2)               # Gives the relevant columns names (for later)
+ 
+  result = wilcox.test(                        # Calculates the wilcoxon test between the categories based on the numerical values
+    data.for.function[data.for.function==1,2],
+    data.for.function[data.for.function==0,2]
+  ) 
+  melted = data.for.function[complete.cases(data.for.function),]   # Removes any missing data from the dataset
+  plot = ggplot(                               # This is a very long function to create the plot
+    melted, aes(x=melted[,1],y=melted[,2],fill=melted[,1])) + # Defines the relevant data
+    geom_boxplot()+                                           # Defines the plot type as Box Plot
+    theme(panel.background = element_rect(fill="white")) +    # Makes it visually clean
+    labs(x = colnames(melted)[1],y="Time [Mins]") +           # Adds X, Y axis labels
+    theme(panel.grid.major = element_line(colour = "gray")) + # adds gray lines on the Y axis
+    theme(panel.grid.minor = element_line(colour = "gray")) + # does the same
+    guides(fill=FALSE)      +                                 # Removes the legend (not needed for this)
+    labs(                                                     # Startes to create the complicated titles
+      title = paste("Comparison between", var1, "&", var2, sep = " "), # Main title: Comparison between the two variables
+      subtitle = paste(                                                # Subtitle: gives the different statistics pasted together
+        "Result of the Wilcoxon Rank Sum Test: \ntest statistic = ",   
+        result$statistic, "\n p-value = ", 
+        formatC(result$p.value, format = "g", digits = 2))) + 
+        geom_signif(comparisons = list(c(var1, var2)),             # Creates a significance star when the pvalue<0.05
+                test="wilcox.test", map_signif_level =  c("*"=0.05))
+  
+  plot                                                         # Saves the final plot 
+}
+
+
+# Now we can ask the questions:
+#2-way catergorical:
+Q9  =  wilcox.categorical.data(names[7], names[18]) # application VS. Appointments 1
+Q17 =  wilcox.categorical.data(names[2], names[32]) # Gender VS. SUM.OLD 
+Q18 =  wilcox.categorical.data(names[2], names[33]) # Gender VS. SUM.NEW
+
+```
+
+Output:
+```{r message=FALSE, warning=FALSE, echo=FALSE}
+Q9
+Q17
+Q18
+
+```

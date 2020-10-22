@@ -1,0 +1,48 @@
+---
+title: "Bits of Code"
+author: "Amir Nakar"
+date: "10/1/2020"
+output: word_document
+fontsize: 6pt
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include=FALSE}
+load(file = "F:/MorK/R/R-environment.RData")
+#### Load the data ####
+library(openxlsx)
+library(reshape2)
+library(ggplot2)
+library(Hmisc) 
+library(dplyr)
+library(car)
+library(caret)
+library(readxl)
+library(ggsignif)
+library(tidyr)
+library(vegan)
+library(purrr)
+```
+ 
+
+```{r message=FALSE, warning=FALSE}
+#### 2-way ANOVA on non-normal data ####
+
+#Parameters needed from original data: Age [3], font 2 [13], Sum.new [33], Sum.old [32]
+data.manova = data[,c(3,13,33,32)]                  #makes a new dataframe with only the relevant columns
+data.manova.filtered = data.manova %>% drop_na() #removes any lines with missing data (NAs)
+colnames(data.manova.filtered) = c("age", "font", "sum.new", "sum.old")  #renames the colomns for easy writing downstream
+
+res.aov.Q1 <- adonis(sum.new ~ age * font, data = data.manova.filtered, permutations = 1000) # Calculates the 2-way ANOVA with 1,000 permutations
+res.aov.Q2 <- adonis(sum.old ~ age * font, data = data.manova.filtered, permutations = 1000) # Calculates the 2-way ANOVA with 1,000 permutations
+```
+
+Output:
+```{r message=FALSE, warning=FALSE, echo=FALSE}
+res.aov.Q1
+res.aov.Q2
+
+```
