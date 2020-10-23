@@ -12,10 +12,10 @@ Questionnaire answers. Either ranking or time difference measurements
 - Binary/Categorical variables: gender, app use, laguage and others
 
 ## Statistics in the code:
-1. Test normal distribution: Shapiro Wilkes test ; histograms ; qqplots (for multiple parameters)
-2. Test mean differencet   : Wilcoxon test ; box plots ; mean difference calculations
-3. Test correlations       : Spearman ; Pearson ; dotplots
-4. Permutation MANOVAs     : non-parametric MANOVA alternative for 3 varaibles, using permutation tests (Anderson method) to increase robustness
+1. Test normal distribution: **Shapiro Wilkes test** ; histograms ; qqplots (for multiple parameters)
+2. Test mean differencet   : **Wilcoxon test** ; box plots ; mean difference calculations
+3. Test correlations       : **Spearman** ; **Pearson** ; dotplots
+4. Permutation MANOVAs     : **non-parametric MANOVA** alternative for 3 varaibles, using permutation tests (**Anderson method**) to increase robustness
 
 ## Vizualisations with ggplot: 
 - Box plots
