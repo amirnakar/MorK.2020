@@ -4,7 +4,7 @@ Statistics on App usage data
 Short Description: 
 This was a small project to test some experiment results on app usage data for a new app
 
-*Data:*
+#Data:
 Questionnaire answers. Either ranking or time difference measurements
 - n = 50 for most parameters
 - Rank variables:       5 (easy ; font1 ; font2 ; n.menu1 ; n.menu2)
